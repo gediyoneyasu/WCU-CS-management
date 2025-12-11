@@ -1,6 +1,9 @@
 {
-  "name": "wcu",
+  "name": "WCU-CS-management",
   "version": "1.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
   "description": "",
   "license": "ISC",
   "author": "",
