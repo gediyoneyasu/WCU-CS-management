@@ -14,25 +14,27 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.use(session({
-    secret: 'wcu-cs-2024-smart-school',
+    secret: process.env.SESSION_SECRET || 'wcu-cs-2024-smart-school',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 
+    }
 }));
 
 // MAMP MySQL Database Connection
-const pool = mysql.createPool({
-    host: process.env.AIVEN_HOST,
-    port: process.env.AIVEN_PORT,
-    user: process.env.AIVEN_USER,
-    password: process.env.AIVEN_PASSWORD,
-    database: process.env.AIVEN_DATABASE,
-    ssl: {
-        rejectUnauthorized: false   // Aiven needs this
-    },
-    waitForConnections: true,
+// Replace this entire database connection block:
+const db = mysql.createPool({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'appschool',
+    password: process.env.DB_PASSWORD || 'appschool',
+    database: process.env.DB_NAME || 'appschool',
+    port: process.env.DB_PORT || 3306,
     connectionLimit: 10,
-    queueLimit: 0
+    acquireTimeout: 30000,
+    timeout: 30000,
+    reconnect: true
 });
 
 // Test database connection
@@ -8098,3 +8100,4 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log("👨‍🏫 Teacher Login: TECH001 / teacher123");
     console.log("💾 Database: Aiven MySQL Cloud");
 });
+
